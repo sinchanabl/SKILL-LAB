@@ -1,0 +1,233 @@
+/*App.js*/
+import React, { useState, useEffect } from 'react';
+import './App.css';
+
+function App() {
+  const [products, setProducts] = useState([]);
+  const [selectedSize, setSelectedSize] = useState(null); 
+  const [cart, setCart] = useState({}); 
+
+  const sampleProducts = [
+    { id: 1, name: 'BDG Sydney Nylon Bomber Jacket', price: 3385, image: 'https://images.urbndata.com/is/image/UrbanOutfitters/87346441_040_f?$redesign-zoom-5x$', sizes: ['XS', 'S', 'M', 'L', 'XL'], rating: 4.5, website: 'https://www.urbanoutfitters.com/shop/bdg-sydney-nylon-bomber-jacket?category=jackets-coats-for-women&color=040&type=REGULAR&quantity=1' },
+    { id: 2, name: 'BDG Logan Buckle Baggy Boyfriend Jean', price: 2999, image: 'https://images.urbndata.com/is/image/UrbanOutfitters/84087246_020_d?$redesign-zoom-5x$', sizes: ['XS', 'S', 'M', 'L', 'XL'], rating: 3.8, website: 'https://www.urbanoutfitters.com/shop/bdg-logan-buckle-boyfriend-jean2?category=jeans-for-women&color=020&type=REGULAR&quantity=1' },
+    { id: 3, name: 'BDG Nicky Stripe Cardigan', price: 999, image: 'https://images.urbndata.com/is/image/UrbanOutfitters/87393401_038_e?$redesign-zoom-5x$', sizes: ['XS', 'S', 'M', 'L', 'XL'], rating: 4.2, website: 'https://www.urbanoutfitters.com/shop/bdg-nicky-stripe-cardigan?category=womens-tops&color=038&type=REGULAR&viewcode=b&quantity=1' },
+    
+  ];
+
+  useEffect(() => {
+    // Simulating fetching products from an API
+    setTimeout(() => {
+      setProducts(sampleProducts);
+    }, 1000);
+  }, []);
+
+  
+  const increaseQuantity = (productId) => {
+    setCart(prevCart => {
+      return {
+        ...prevCart,
+        [productId]: (prevCart[productId] || 0) + 1
+      };
+    });
+  };
+
+ 
+  const decreaseQuantity = (productId) => {
+    setCart(prevCart => {
+      const updatedCart = { ...prevCart };
+      if (updatedCart[productId] && updatedCart[productId] > 0) {
+        updatedCart[productId]--;
+      }
+      return updatedCart;
+    });
+  };
+
+  return (
+    <div className="App">
+      <header className="navbar">
+        <div className="logo">HABIT</div>
+        <div className="search-bar">
+          <input type="text" placeholder="Search for products..." />
+          <button>Search</button>
+        </div>
+        <div className="categories">
+          <button>All</button>
+          <button>Women</button>
+          <button>Men</button>
+          <button>Home</button>
+          <button>Beauty</button>
+          {/* Add more categories as needed */}
+        </div>
+      </header>
+      <main className="product-list">
+        {products.map(product => (
+          <div key={product.id} className="product-card">
+            <a href={product.website} target="_blank" rel="noopener noreferrer">
+              <img src={product.image} alt={product.name} />
+            </a>
+            <h3>{product.name}</h3>
+            <p className="price">Rs.{product.price}</p>
+            <p className="rating">Rating: {product.rating}</p> {/* Display numerical rating */}
+            <div className="sizes">
+              {product.sizes.map((size, index) => (
+                <button 
+                  key={index} 
+                  className={selectedSize === size ? "selected" : ""} 
+                  onClick={() => setSelectedSize(size)}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+            <div className="quantity-controls">
+              <button onClick={() => decreaseQuantity(product.id)}>-</button>
+              <span className="quantity">{cart[product.id] || 0}</span>
+              <button onClick={() => increaseQuantity(product.id)}>+</button>
+            </div>
+            <a href={product.website} target="_blank" rel="noopener noreferrer" className="add-to-cart">Add to Cart</a>
+          </div>
+        ))}
+      </main>
+      <footer className="footer">
+        <p>© 2024 Habit </p>
+      </footer>
+    </div>
+  );
+}
+
+export default App;
+
+/* App.css */
+.App {
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+}
+
+.search-bar {
+  display: flex;
+}
+
+.search-bar input[type="text"] {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+}
+
+.search-bar button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.categories {
+  display: flex;
+}
+
+.categories button {
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  margin-left: 1rem;
+  cursor: pointer;
+}
+
+.product-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem;
+  width: 300px;
+}
+
+.product-card img {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.product-card h3 {
+  margin-top: 0.5rem;
+}
+
+.product-card .price {
+  font-weight: bold;
+}
+
+.rating {
+  font-size: 14px;
+  color: #888;
+}
+
+.product-card .quantity-controls button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  margin: 0 0.25rem;
+  cursor: pointer;
+}
+
+.sizes {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem; 
+}
+
+.sizes button {
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.sizes button.selected {
+  background-color: white;
+  color: black;
+}
+
+.quantity-controls {
+  margin-top: 0.5rem; 
+  margin-bottom: 1.0rem; 
+}
+
+.add-to-cart {
+  background-color: black;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 300px; 
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem; 
+}
+
+.add-to-cart:hover {
+  background-color: #333; 
+}
+
+
+.product-card .quantity {
+  margin: 0 0.5rem;
+}
+
